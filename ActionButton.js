@@ -6,6 +6,7 @@ import {
   View,
   Animated,
   TouchableOpacity,
+  FlatList
 } from "react-native";
 import ActionButtonItem from "./ActionButtonItem";
 import {
@@ -267,34 +268,33 @@ export default class ActionButton extends Component {
 
     const actionStyle = {
       flex: 1,
+      height: '100%',
       alignSelf: "stretch",
-      // backgroundColor: 'purple',
-      justifyContent: verticalOrientation === "up" ? "flex-end" : "flex-start",
       paddingTop: this.props.verticalOrientation === "down"
         ? this.props.spacing
         : 0,
       zIndex: this.props.zIndex
     };
+    
+    const justifyContent = { justifyContent: verticalOrientation === "up" ? "flex-end" : "flex-start" };
 
     return (
-      <View style={actionStyle} pointerEvents={"box-none"}>
-        {actionButtons.map((ActionButton, idx) => (
-          <ActionButtonItem
-            key={idx}
-            anim={this.anim}
-            {...this.props}
-            {...ActionButton.props}
-            parentSize={this.props.size}
-            btnColor={this.props.btnOutRange}
-            onPress={() => {
-              if (this.props.autoInactive) {
-                this.timeout = setTimeout(this.reset.bind(this), 200);
-              }
-              ActionButton.props.onPress();
-            }}
-          />
-        ))}
-      </View>
+      <FlatList data={actionButtons} style={actionStyle} pointerEvents={"box-none"} contentContainerStyle={() => justifyContent} renderItem={({ item: ActionButton, idx }) => (
+        <ActionButtonItem
+          key={idx}
+          anim={this.anim}
+          {...this.props}
+          {...ActionButton.props}
+          parentSize={this.props.size}
+          btnColor={this.props.btnOutRange}
+          onPress={() => {
+            if (this.props.autoInactive) {
+              this.timeout = setTimeout(this.reset.bind(this), 200);
+            }
+            ActionButton.props.onPress();
+          }}
+        />
+      )} />
     );
   }
 
